@@ -1,0 +1,37 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main  # или master, если у тебя ветка master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+
+      - name: Build the project
+        run: |
+          npm install
+          npm run build
+
+      - name: Deploy to VPS via SSH
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_PRIVATE_KEY }}
+          script: |
+            cd /var/www/test
+            git pull origin main
+            npm install
+            npm run build
+            sudo systemctl reload nginx
