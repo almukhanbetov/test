@@ -1,0 +1,12 @@
+name: Test SSH Key
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-ssh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print private key format
+        run: |
+          echo "${{ secrets.VPS_PRIVATE_KEY }}" | head -n 5
